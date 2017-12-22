@@ -1,40 +1,31 @@
 // @APIVersion 1.0.0
-// @Title beego Test API
+// @Title dop cloud API
 // @Description beego has a very cool tools to autogenerate documents for your API
-// @Contact astaxie@gmail.com
-// @TermsOfServiceUrl http://beego.me/
+// @Contact xingshanghe@gmail.com
+// @TermsOfServiceUrl http://sgrcloud.com/
 // @License Apache 2.0
 // @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
 package routers
 
 import (
-	"github.com/xingshanghe/neapi/controllers"
-	"github.com/xingshanghe/neapi/controllers/v1"
-
 	"github.com/astaxie/beego"
+	"github.com/xingshanghe/neapi/controllers/v1"
 )
 
 func init() {
-	ns := beego.NewNamespace("/test",
-		beego.NSNamespace("/object",
-			beego.NSInclude(
-				&controllers.ObjectController{},
-			),
-		),
-		beego.NSNamespace("/user",
-			beego.NSInclude(
-				&controllers.UserController{},
-			),
-		),
-	)
 
-	nens := beego.NewNamespace("/v1",
+	dopns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/accounts",
 			beego.NSInclude(
 				&v1.AccountsController{},
 			),
 		),
+		beego.NSNamespace("/users",
+			beego.NSInclude(
+				&v1.UsersController{},
+			),
+		),
 	)
 
-	beego.AddNamespace(ns, nens)
+	beego.AddNamespace(dopns)
 }

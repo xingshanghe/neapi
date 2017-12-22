@@ -2,17 +2,8 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
-	//"os"
 )
 
-const SYSTEM_LOG_FILE = "tmp/logs/neapi.log"
-
-var NeLogger *logs.BeeLogger
-
-func init() {
-	go initNeLogger()
-}
 
 // 基础控制器
 type BaseController struct {
@@ -26,12 +17,6 @@ type Returned struct {
 	Data interface{} `json:"data"` //返回消息
 }
 
-// 初始化G2logger
-func initNeLogger() {
-	NeLogger = logs.NewLogger(10000)
-	//os.Create(SYSTEM_LOG_FILE)
-	NeLogger.SetLogger("file", `{"filename":"`+SYSTEM_LOG_FILE+`"}`)
-}
 
 // 认证
 //func (this *BaseController) Prepare() {

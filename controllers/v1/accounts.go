@@ -3,7 +3,6 @@ package v1
 import (
 	"github.com/astaxie/beego/logs"
 	"github.com/bitly/go-simplejson"
-
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/libs"
 	"github.com/xingshanghe/neapi/models"
@@ -29,22 +28,33 @@ func (this *AccountsController) Login() {
 	logs.Info(username, password, captcha)
 
 	var data struct {
-		Token   string         `json:"token"`
-		Account models.Account `json:"account"`
+		Token   string      `json:"token"`
+		Account models.User `json:"account"`
 	}
 	//TODO 验证用户，密码
 	var token string
-	account := models.Account{
-		Username: username,
-		Password: password,
-		Profile:  models.Detail{"邢尚合", "男", 32, "四川省成都市", username + "@gmail.com"},
+	user := models.User{
+		Account: models.Account{
+			Id:       1,
+			Username: username,
+			Password: password,
+			Phone:    "18010636836",
+			Email:    username + "@gmail.com",
+		},
+		Detail: models.Detail{
+			Id:       1,
+			Nickname: "邢尚合",
+			Gender:   "男",
+			Age:      32,
+			Address:  "四川省成都市",
+		},
 	}
 	if err == nil {
-		token, err = libs.CreateJwt(account)
+		token, err = libs.CreateJwt(user)
 
 		if err == nil {
 			data.Token = token
-			data.Account = account
+			data.Account = user
 
 		} else {
 			r.Msg = err.Error()

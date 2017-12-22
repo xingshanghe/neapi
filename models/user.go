@@ -1,86 +1,80 @@
 package models
 
 import (
-	"errors"
+	"github.com/xingshanghe/neapi/libs"
+	"net/url"
 	"strconv"
-	"time"
-)
-
-var (
-	UserList map[string]*User
 )
 
 func init() {
-	UserList = make(map[string]*User)
-	u := User{"user_11111", "astaxie", "11111", Profile{"male", 20, "Singapore", "astaxie@gmail.com"}}
-	UserList["user_11111"] = &u
+}
+
+type Account struct {
+	Id       int    `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Phone    string `json:"phone"`
+	Email    string `json:"email"`
+}
+
+type Detail struct {
+	Id        int    `json:"id"`
+	AccountId int    `json:"account_id" xorm:"index"`
+	Nickname  string `json:"nickname"`
+	Gender    string `json:"gender"`
+	Age       int    `json:"age"`
+	Address   string `json:"address"`
 }
 
 type User struct {
-	Id       string
-	Username string
-	Password string
-	Profile  Profile
+	Account `xorm:"extends"`
+	Detail  `xorm:"extends"`
 }
 
-type Profile struct {
-	Gender  string
-	Age     int
-	Address string
-	Email   string
+func (m *User) TableName() string {
+	return "account"
 }
 
-func AddUser(u User) string {
-	u.Id = "user_" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	UserList[u.Id] = &u
-	return u.Id
+// 手动设置表名
+func (m *Detail) TableName() string {
+	return "account_detail"
 }
 
-func GetUser(uid string) (u *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		return u, nil
+type Users []User
+type UsersPaged struct {
+	Users `json:"users"`
+	Paged
+}
+
+// 获取全部列表
+func (m *User) List() (Users, error) {
+	users := Users{}
+
+	err := E.Join("LEFT OUTER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
+		Find(&users)
+
+	return users, err
+}
+
+// 分页列表
+func (m *User) Page(params url.Values) (UsersPaged, error) {
+	users := Users{}
+	pageSize, e1 := strconv.Atoi(params.Get("pageSize"))
+	if e1 != nil {
+		pageSize = libs.PageSize
 	}
-	return nil, errors.New("User not exists")
-}
-
-func GetAllUsers() map[string]*User {
-	return UserList
-}
-
-func UpdateUser(uid string, uu *User) (a *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		if uu.Username != "" {
-			u.Username = uu.Username
-		}
-		if uu.Password != "" {
-			u.Password = uu.Password
-		}
-		if uu.Profile.Age != 0 {
-			u.Profile.Age = uu.Profile.Age
-		}
-		if uu.Profile.Address != "" {
-			u.Profile.Address = uu.Profile.Address
-		}
-		if uu.Profile.Gender != "" {
-			u.Profile.Gender = uu.Profile.Gender
-		}
-		if uu.Profile.Email != "" {
-			u.Profile.Email = uu.Profile.Email
-		}
-		return u, nil
-	}
-	return nil, errors.New("User Not Exist")
-}
-
-func Login(username, password string) bool {
-	for _, u := range UserList {
-		if u.Username == username && u.Password == password {
-			return true
+	page, e1 := strconv.Atoi(params.Get("page"))
+	if e1 != nil {
+		page = libs.PageNo
+	} else {
+		if page < 1 {
+			page = 1
 		}
 	}
-	return false
-}
-
-func DeleteUser(uid string) {
-	delete(UserList, uid)
+	total, _ := E.Count(m)
+	err := E.Join("LEFT OUTER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
+		Limit(pageSize, page-1).
+		Find(&users)
+	userPaged := UsersPaged{users, Paged{total, pageSize, page}}
+	return userPaged, err
 }

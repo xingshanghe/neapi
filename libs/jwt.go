@@ -3,6 +3,7 @@ package libs
 import (
 	"time"
 
+	"github.com/astaxie/beego/config"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -21,6 +22,7 @@ func CreateJwt(account interface{}) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	conf, _ := config.NewConfig("ini", "conf/app.conf")
 
-	return token.SignedString([]byte("ne----admin"))
+	return token.SignedString([]byte(conf.String("salt")))
 }

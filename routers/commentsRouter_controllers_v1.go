@@ -15,4 +15,12 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:UsersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:UsersController"],
+		beego.ControllerComments{
+			Method: "List",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post","get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 }
