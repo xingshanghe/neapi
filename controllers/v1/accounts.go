@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"github.com/astaxie/beego/logs"
 	"github.com/bitly/go-simplejson"
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/libs"
@@ -23,49 +22,52 @@ func (this *AccountsController) Login() {
 
 	username, _ := dataBody.Get("username").String()
 	password, _ := dataBody.Get("password").String()
-	captcha, _ := dataBody.Get("captcha").String()
-
-	logs.Info(username, password, captcha)
+	//captcha, _ := dataBody.Get("captcha").String()
 
 	var data struct {
 		Token   string      `json:"token"`
 		Account models.User `json:"account"`
 	}
-	//TODO 验证用户，密码
-	var token string
-	user := models.User{
-		Account: models.Account{
-			Id:       1,
-			Username: username,
-			Password: password,
-			Phone:    "18010636836",
-			Email:    username + "@gmail.com",
-		},
-		Detail: models.Detail{
-			Id:       1,
-			Nickname: "邢尚合",
-			Gender:   "男",
-			Age:      32,
-			Address:  "四川省成都市",
-		},
+	account := models.Account{
+		Username: username,
+		Password: password,
 	}
+	var hasThisAccount bool
+	hasThisAccount, err = models.E.Get(&account)
 	if err == nil {
-		token, err = libs.CreateJwt(user)
+		if hasThisAccount {
+			detail := models.Detail{}
+			models.E.Get(&detail)
+			user := models.User{
+				account,
+				detail,
+			}
+			var token string
+			token, err = libs.CreateJwt(user)
 
-		if err == nil {
-			data.Token = token
-			data.Account = user
-
+			if err == nil {
+				data.Token = token
+				data.Account = user
+				r.Data = data
+			} else {
+				r.Data = new(struct {
+					Token string `json:"token"`
+				})
+				r.Msg = err.Error()
+			}
 		} else {
-			r.Msg = err.Error()
+			r.Data = new(struct {
+				Token string `json:"token"`
+			})
+			r.Code = 5000
+			r.Msg = "账号密码验证错误."
 		}
-
 	} else {
+		r.Data = new(struct {
+			Token string `json:"token"`
+		})
 		r.Msg = err.Error()
 	}
-
-	r.Data = data
-
 	this.Data["json"] = r
 	this.ServeJSON()
 }

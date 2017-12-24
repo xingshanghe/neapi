@@ -17,8 +17,8 @@ var E *xorm.Engine
 //返回信息结构体
 type Paged struct {
 	Total    int64 `json:"total"`
-	PageSize int `json:"page_size"`
-	PageNo   int `json:"page_no"`
+	PageSize int   `json:"page_size"`
+	PageNo   int   `json:"page_no"`
 }
 
 func init() {

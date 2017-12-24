@@ -72,8 +72,8 @@ func (m *User) Page(params url.Values) (UsersPaged, error) {
 		}
 	}
 	total, _ := E.Count(m)
-	err := E.Join("LEFT OUTER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
-		Limit(pageSize, page-1).
+	err := E.Join("INNER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
+		Limit(pageSize, (page-1)*pageSize).
 		Find(&users)
 	userPaged := UsersPaged{users, Paged{total, pageSize, page}}
 	return userPaged, err

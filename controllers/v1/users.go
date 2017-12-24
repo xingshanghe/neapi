@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/models"
+	"github.com/astaxie/beego/logs"
 )
 
 type UsersController struct {
@@ -16,6 +17,8 @@ type UsersController struct {
 func (this *UsersController) List() {
 	var r controllers.Returned
 	input := this.Input()
+
+	logs.Error(input)
 
 	user := models.User{}
 	data, err := user.Page(input)
