@@ -2,6 +2,7 @@ package models
 
 import (
 	"runtime"
+	"time"
 
 	"github.com/astaxie/beego/config"
 	"github.com/astaxie/beego/orm"
@@ -40,6 +41,7 @@ func initOrmAndXorm(alias string) {
 	engine.SetMaxOpenConns(max)
 
 	engine.ShowSQL(appConf.String("runmode") == "dev")
+	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
 
 	E = engine
 }

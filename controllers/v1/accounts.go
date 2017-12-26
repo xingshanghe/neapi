@@ -36,7 +36,9 @@ func (this *AccountsController) Login() {
 	hasThisAccount, err = models.E.Get(&account)
 	if err == nil {
 		if hasThisAccount {
-			detail := models.Detail{}
+			detail := models.Detail{
+				AccountId: account.Id,
+			}
 			models.E.Get(&detail)
 			user := models.User{
 				account,

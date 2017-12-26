@@ -1,29 +1,37 @@
 package models
 
 import (
+	"github.com/astaxie/beego/logs"
 	"github.com/xingshanghe/neapi/libs"
+	"github.com/xingshanghe/neapi/libs/uuid"
 	"net/url"
 	"strconv"
+	//"time"
 )
 
 func init() {
 }
 
 type Account struct {
-	Id       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Phone    string `json:"phone"`
-	Email    string `json:"email"`
+	Id       string    `json:"id"`
+	Username string    `json:"username"`
+	Password string    `json:"password"`
+	Phone    string    `json:"phone"`
+	Email    string    `json:"email"`
+	Status   int       `json:"status"`
+	//Deleted  time.Time `json:"deleted" xorm:"deleted"`
 }
 
 type Detail struct {
-	Id        int    `json:"id"`
-	AccountId int    `json:"account_id" xorm:"index"`
+	Id        string `json:"did"`
+	AccountId string `json:"account_id" xorm:"index"`
 	Nickname  string `json:"nickname"`
 	Gender    string `json:"gender"`
 	Age       int    `json:"age"`
 	Address   string `json:"address"`
+	Birthday  string `json:"birthday"`
+	Created   int64  `json:"created" xorm:"created"`
+	Updated   int64  `json:"updated" xorm:"updated"`
 }
 
 type User struct {
@@ -50,8 +58,12 @@ type UsersPaged struct {
 func (m *User) List() (Users, error) {
 	users := Users{}
 
-	err := E.Join("LEFT OUTER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
+	err := E.Join("INNER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
 		Find(&users)
+
+	for _, a := range users {
+		logs.Error(a)
+	}
 
 	return users, err
 }
@@ -73,8 +85,225 @@ func (m *User) Page(params url.Values) (UsersPaged, error) {
 	}
 	total, _ := E.Count(m)
 	err := E.Join("INNER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
-		Limit(pageSize, (page-1)*pageSize).
+		Limit(pageSize, (page-1)*pageSize).Desc("d.created").
 		Find(&users)
 	userPaged := UsersPaged{users, Paged{total, pageSize, page}}
 	return userPaged, err
+}
+
+func (m *User) Add(params url.Values) error {
+	s := E.NewSession()
+	defer s.Close()
+
+	err := s.Begin()
+	if err != nil {
+		return err
+	}
+	//插入帐号信息
+	account := Account{
+		Id:       uuid.Rand().Raw(),
+		Username: params.Get("username"),
+		Password: libs.GetRandomString(6),
+		Email:    params.Get("email"),
+		Phone:    params.Get("phone"),
+		Status:   0,
+	}
+	_, err = s.Insert(&account)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	age, _ := strconv.Atoi(params.Get("age"))
+	detail := Detail{
+		Id:        uuid.Rand().Raw(),
+		AccountId: account.Id,
+		Nickname:  params.Get("nickname"),
+		Gender:    params.Get("gender"),
+		Age:       age,
+		Address:   params.Get("address"),
+		Birthday:  params.Get("birthday"),
+	}
+	_, err = s.Insert(&detail)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	err = s.Commit()
+	if err != nil {
+		return err
+	} else {
+		m.Account = account
+		m.Detail = detail
+	}
+
+	return err
+}
+
+func (m *User) Edit(params url.Values) error {
+	s := E.NewSession()
+	defer s.Close()
+
+	err := s.Begin()
+	if err != nil {
+		return err
+	}
+
+	account := Account{
+		Username: params.Get("username"),
+		Email:    params.Get("email"),
+		Phone:    params.Get("phone"),
+	}
+
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("id")).Update(&account)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	age, _ := strconv.Atoi(params.Get("age"))
+	detail := Detail{
+		Nickname: params.Get("nickname"),
+		Gender:   params.Get("gender"),
+		Age:      age,
+		Address:  params.Get("address"),
+		Birthday: params.Get("birthday"),
+	}
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("did")).Update(&detail)
+
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+
+	err = s.Commit()
+	if err != nil {
+		return err
+	} else {
+		m.Account = account
+		m.Detail = detail
+	}
+
+	return err
+}
+
+func (m *User) Delete(params url.Values) error {
+	s := E.NewSession()
+	defer s.Close()
+
+	err := s.Begin()
+	if err != nil {
+		return err
+	}
+
+	account := Account{}
+
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("id")).Delete(&account)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+
+	detail := Detail{}
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("did")).Delete(&detail)
+
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+
+	err = s.Commit()
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (m *User) ToggleStatus(params url.Values) error {
+	s := E.NewSession()
+	defer s.Close()
+
+	err := s.Begin()
+	if err != nil {
+		return err
+	}
+
+	statusOld, _ := strconv.Atoi(params.Get("status"))
+	var status int
+	if statusOld == 0 {
+		status = 1
+	}
+	if statusOld == 1 {
+		status = 0
+	}
+	account := Account{
+		Status: status,
+	}
+
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("id")).Cols("status").Update(&account)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	detail := Detail{}
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("did")).Update(&detail)
+
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+
+	err = s.Commit()
+	if err != nil {
+		return err
+	} else {
+		m.Account = account
+		m.Detail = detail
+	}
+
+	return err
+}
+
+func (m *User) ResetPwd(params url.Values) error {
+	s := E.NewSession()
+	defer s.Close()
+
+	err := s.Begin()
+	if err != nil {
+		return err
+	}
+
+	account := Account{
+		Password: libs.GetRandomString(6),
+	}
+
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("id")).Update(&account)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	detail := Detail{}
+	//更新字段
+	_, err = E.Where("id = ?", params.Get("did")).Update(&detail)
+
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+
+	err = s.Commit()
+	if err != nil {
+		return err
+	} else {
+		m.Account = account
+		m.Detail = detail
+	}
+
+	return err
 }
