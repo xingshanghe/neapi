@@ -13,12 +13,12 @@ func init() {
 }
 
 type Account struct {
-	Id       string    `json:"id"`
-	Username string    `json:"username"`
-	Password string    `json:"password"`
-	Phone    string    `json:"phone"`
-	Email    string    `json:"email"`
-	Status   int       `json:"status"`
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Phone    string `json:"phone"`
+	Email    string `json:"email"`
+	Status   int    `json:"status"`
 	//Deleted  time.Time `json:"deleted" xorm:"deleted"`
 }
 
@@ -180,6 +180,12 @@ func (m *User) Edit(params url.Values) error {
 	if err != nil {
 		return err
 	} else {
+		//补全接口未修改字段
+		account.Id = params.Get("id")
+		account.Password = params.Get("password")
+		detail.Id = params.Get("did")
+		detail.AccountId = params.Get("account_id")
+
 		m.Account = account
 		m.Detail = detail
 	}
