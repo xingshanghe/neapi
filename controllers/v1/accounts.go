@@ -36,26 +36,35 @@ func (this *AccountsController) Login() {
 	hasThisAccount, err = models.E.Get(&account)
 	if err == nil {
 		if hasThisAccount {
-			detail := models.Detail{
-				AccountId: account.Id,
-			}
-			models.E.Get(&detail)
-			user := models.User{
-				account,
-				detail,
-			}
-			var token string
-			token, err = libs.CreateJwt(user)
 
-			if err == nil {
-				data.Token = token
-				data.Account = user
-				r.Data = data
-			} else {
+			if(account.Status == 0){
+				detail := models.Detail{
+					AccountId: account.Id,
+				}
+				models.E.Get(&detail)
+				user := models.User{
+					account,
+					detail,
+				}
+				var token string
+				token, err = libs.CreateJwt(user)
+
+				if err == nil {
+					data.Token = token
+					data.Account = user
+					r.Data = data
+				} else {
+					r.Data = new(struct {
+						Token string `json:"token"`
+					})
+					r.Msg = err.Error()
+				}
+			}else{
 				r.Data = new(struct {
 					Token string `json:"token"`
 				})
-				r.Msg = err.Error()
+				r.Code = 5001
+				r.Msg = "该帐号已被锁定禁止登录."
 			}
 		} else {
 			r.Data = new(struct {
