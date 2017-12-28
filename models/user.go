@@ -1,37 +1,37 @@
 package models
 
 import (
-	"github.com/astaxie/beego/logs"
 	"github.com/xingshanghe/neapi/libs"
 	"github.com/xingshanghe/neapi/libs/uuid"
 	"net/url"
 	"strconv"
-	//"time"
+	"time"
 )
 
 func init() {
 }
 
 type Account struct {
-	Id       string `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Phone    string `json:"phone"`
-	Email    string `json:"email"`
-	Status   int    `json:"status"`
-	//Deleted  time.Time `json:"deleted" xorm:"deleted"`
+	Id       string    `json:"id"`
+	Username string    `json:"username"`
+	Password string    `json:"password"`
+	Phone    string    `json:"phone"`
+	Email    string    `json:"email"`
+	Status   int       `json:"status"`
+	Deleted  time.Time `json:"deleted" xorm:"deleted"`
 }
 
 type Detail struct {
-	Id        string `json:"did"`
-	AccountId string `json:"account_id" xorm:"index"`
-	Nickname  string `json:"nickname"`
-	Gender    string `json:"gender"`
-	Age       int    `json:"age"`
-	Address   string `json:"address"`
-	Birthday  string `json:"birthday"`
-	Created   int64  `json:"created" xorm:"created"`
-	Updated   int64  `json:"updated" xorm:"updated"`
+	Id        string    `json:"did"`
+	AccountId string    `json:"account_id" xorm:"index"`
+	Nickname  string    `json:"nickname"`
+	Gender    string    `json:"gender"`
+	Age       int       `json:"age"`
+	Address   string    `json:"address"`
+	Birthday  string    `json:"birthday"`
+	Created   int64     `json:"created" xorm:"created"`
+	Updated   int64     `json:"updated" xorm:"updated"`
+	Deleted   time.Time `json:"detail_deleted" xorm:"deleted"`
 }
 
 type User struct {
@@ -60,10 +60,6 @@ func (m *User) List() (Users, error) {
 
 	err := E.Join("INNER", []string{m.Detail.TableName(), "d"}, "account.id = d.account_id").
 		Find(&users)
-
-	for _, a := range users {
-		logs.Error(a)
-	}
 
 	return users, err
 }
@@ -180,11 +176,13 @@ func (m *User) Edit(params url.Values) error {
 	if err != nil {
 		return err
 	} else {
-		//补全接口未修改字段
+		//补全接口未修改字段,不补全可以看出那些字段被修改过
 		account.Id = params.Get("id")
 		account.Password = params.Get("password")
+		account.Status,_ = strconv.Atoi(params.Get("status"))
 		detail.Id = params.Get("did")
 		detail.AccountId = params.Get("account_id")
+		detail.Created,_= strconv.ParseInt(params.Get("created"), 10, 64)
 
 		m.Account = account
 		m.Detail = detail
@@ -228,6 +226,7 @@ func (m *User) Delete(params url.Values) error {
 	return err
 }
 
+// 切换用户状态
 func (m *User) ToggleStatus(params url.Values) error {
 	s := E.NewSession()
 	defer s.Close()
@@ -275,6 +274,7 @@ func (m *User) ToggleStatus(params url.Values) error {
 	return err
 }
 
+// 重置密码
 func (m *User) ResetPwd(params url.Values) error {
 	s := E.NewSession()
 	defer s.Close()

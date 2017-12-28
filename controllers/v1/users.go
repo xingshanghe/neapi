@@ -52,7 +52,7 @@ func (this *UsersController) Add() {
 	this.ServeJSON()
 }
 
-// 新增
+// 编辑
 // @Title Edit a User
 // @Description  Edit User
 // @router /edit [post]
@@ -74,7 +74,6 @@ func (this *UsersController) Edit() {
 	this.ServeJSON()
 }
 
-
 // 删除
 // @Title Delete a User
 // @Description  Delete User
@@ -84,13 +83,18 @@ func (this *UsersController) Delete() {
 
 	input := this.Input()
 
-	user := models.User{}
-	err := user.Delete(input)
-	if err != nil {
-		r.Code = 5000
-		r.Msg = err.Error()
+	if input.Get("username") != "admin" {
+		user := models.User{}
+		err := user.Delete(input)
+		if err != nil {
+			r.Code = 5000
+			r.Msg = err.Error()
+		} else {
+			r.Data = user
+		}
 	} else {
-		r.Data = user
+		r.Code = 5001
+		r.Msg = "系统保留帐号，禁止删除!"
 	}
 
 	this.Data["json"] = r
