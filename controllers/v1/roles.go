@@ -95,3 +95,22 @@ func (this *RolesController) Delete() {
 	this.Data["json"] = r
 	this.ServeJSON()
 }
+
+// 为角色添加用户
+// @Title set Roles to a User
+// @Description  set Roles to a User
+// @router /setUsers [post]
+func (this *RolesController) SetUsers() {
+	var r controllers.Returned
+	input := this.Input()
+	rule := models.Rule{}
+	rules, err := rule.SetRoleUsers(input)
+	if err != nil {
+		r.Code = 5000
+		r.Msg = err.Error()
+	} else {
+		r.Data = rules
+	}
+	this.Data["json"] = r
+	this.ServeJSON()
+}

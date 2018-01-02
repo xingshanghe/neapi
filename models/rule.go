@@ -1,26 +1,95 @@
 package models
 
 import (
-	"github.com/astaxie/beego/orm"
+	"net/url"
+	"strings"
+
+	"github.com/casbin/casbin"
 )
 
 func init() {
-	// 注册模型
-	orm.RegisterModel( new(Rule))
 }
 
 type Rule struct {
-	Id    int    `json:"id" orm:column(id);pk`
-	PType string `json:"p_type" orm:"column(p_type)"`
-	V0    string `json:"v0" orm:"column(v0)"`
-	V1    string `json:"v1" orm:"column(v1)"`
-	V2    string `json:"v2" orm:"column(v2)"`
-	V3    string `json:"v3" orm:"column(v3)"`
-	V4    string `json:"v4" orm:"column(v4)"`
-	V5    string `json:"v5" orm:"column(v5)"`
+	Id      string `json:"id"`
+	PType   string `json:"p_type" xorm:"'p_type'"`
+	V0      string `json:"v0" xorm:"'v0'"`
+	V1      string `json:"v1" xorm:"'v1'"`
+	V2      string `json:"v2" xorm:"'v2'"`
+	V3      string `json:"v3" xorm:"'v3'"`
+	V4      string `json:"v4" xorm:"'v4'"`
+	V5      string `json:"v5" xorm:"'v5'"`
+	Created int64  `json:"created" xorm:"created"`
+	Updated int64  `json:"updated" xorm:"updated"`
 }
+type Rules []Rule
 
 // 手动设置表名
 func (m *Rule) TableName() string {
-	return "rules"
+	return "rule"
+}
+
+// 获取全部列表
+func (m *Rule) List(params url.Values) (Rules, error) {
+	rules := Rules{}
+
+	s := E.NewSession()
+	defer s.Close()
+
+	s.Where("p_type = ? ", "g")
+	if params.Get("v0") != "" {
+		s.Where("v0 = ? ", params.Get("v0"))
+	}
+	if params.Get("v1") != "" {
+		s.Where("v1 = ? ", params.Get("v1"))
+	}
+
+	err := s.Find(&rules)
+	return rules, err
+}
+
+// 给角色设置用户
+func (m *Rule) SetRoleUsers(params url.Values) (Rules, error) {
+	rules := Rules{}
+	e := casbin.NewEnforcer("conf/rbac.conf", Ca)
+	err := e.LoadPolicy()
+	role := params.Get("roles")
+
+	cleansIds := params.Get("cleans")
+	cleans := strings.Split(cleansIds, ",")
+	for _, clean:= range cleans  {
+		e.RemoveGroupingPolicy(clean, role)
+	}
+
+	usersIds := params.Get("users")
+	users := strings.Split(usersIds, ",")
+	for _, user := range users {
+		e.AddGroupingPolicy(user, role)
+	}
+	E.Where("p_type = ? and v1 = ?", "g", role).Find(&rules)
+	return rules, err
+}
+
+// 给用户设置角色
+func (m *Rule) SetUserRoles(params url.Values) (Rules, error) {
+	rules := Rules{}
+	e := casbin.NewEnforcer("conf/rbac.conf", Ca)
+	err := e.LoadPolicy()
+
+	user := params.Get("users")
+
+	cleansIds := params.Get("cleans")
+	cleans := strings.Split(cleansIds, ",")
+	for _, clean:= range cleans  {
+		e.RemoveGroupingPolicy(user, clean)
+	}
+
+	rolesIds := params.Get("roles")
+	roles := strings.Split(rolesIds, ",")
+
+	for _, role := range roles {
+		e.AddGroupingPolicy(user, role)
+	}
+	E.Where("p_type = ? and v0 = ?", "g", user).Find(&rules)
+	return rules, err
 }

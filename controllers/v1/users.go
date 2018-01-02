@@ -144,3 +144,22 @@ func (this *UsersController) ResetPwd() {
 	this.Data["json"] = r
 	this.ServeJSON()
 }
+
+// 为用户添加角色
+// @Title set Roles to a User
+// @Description  set Roles to a User
+// @router /setRoles [post]
+func (this *UsersController) SetRoles() {
+	var r controllers.Returned
+	input := this.Input()
+	rule := models.Rule{}
+	rules,err := rule.SetUserRoles(input)
+	if err != nil {
+		r.Code = 5000
+		r.Msg = err.Error()
+	} else {
+		r.Data = rules
+	}
+	this.Data["json"] = r
+	this.ServeJSON()
+}
