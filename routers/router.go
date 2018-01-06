@@ -35,6 +35,11 @@ func init() {
 				&v1.RulesController{},
 			),
 		),
+		beego.NSNamespace("/menus",
+			beego.NSInclude(
+				&v1.MenusController{},
+			),
+		),
 	)
 
 	beego.AddNamespace(dopns)
