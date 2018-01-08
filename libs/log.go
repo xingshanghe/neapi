@@ -1,8 +1,8 @@
 package libs
 
 import (
-"github.com/astaxie/beego/config"
-"github.com/astaxie/beego/logs"
+	"github.com/astaxie/beego/config"
+	"github.com/astaxie/beego/logs"
 )
 
 var (

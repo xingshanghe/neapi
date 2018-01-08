@@ -4,7 +4,6 @@ import (
 	"github.com/astaxie/beego"
 )
 
-
 // 基础控制器
 type BaseController struct {
 	beego.Controller
@@ -16,7 +15,6 @@ type Returned struct {
 	Msg  string      `json:"msg"`  //返回消息
 	Data interface{} `json:"data"` //返回消息
 }
-
 
 // 认证
 //func (this *BaseController) Prepare() {

@@ -17,14 +17,19 @@ func (this *RulesController) GList() {
 	var r controllers.Returned
 	input := this.Input()
 
-	rule := models.Rule{}
+	menuRule := models.MenuRule{}
 	input.Set("p_type", "g")
-	data, err := rule.List(input)
-	if err != nil {
-		r.Code = 5000
-		r.Msg = err.Error()
+
+	if (input.Get("v0") != "") || (input.Get("v1") != "") {
+		data, err := menuRule.List(input)
+		if err != nil {
+			r.Code = 5000
+			r.Msg = err.Error()
+		} else {
+			r.Data = data
+		}
 	} else {
-		r.Data = data
+		r.Data = []string{}
 	}
 
 	this.Data["json"] = r
@@ -39,14 +44,19 @@ func (this *RulesController) PList() {
 	var r controllers.Returned
 	input := this.Input()
 
-	rule := models.Rule{}
+	menuRule := models.MenuRule{}
 	input.Set("p_type", "p")
-	data, err := rule.List(input)
-	if err != nil {
-		r.Code = 5000
-		r.Msg = err.Error()
+
+	if input.Get("v0") != "" {
+		data, err := menuRule.List(input)
+		if err != nil {
+			r.Code = 5000
+			r.Msg = err.Error()
+		} else {
+			r.Data = data
+		}
 	} else {
-		r.Data = data
+		r.Data = []string{}
 	}
 
 	this.Data["json"] = r

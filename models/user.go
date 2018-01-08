@@ -179,10 +179,10 @@ func (m *User) Edit(params url.Values) error {
 		//补全接口未修改字段,不补全可以看出那些字段被修改过
 		account.Id = params.Get("id")
 		account.Password = params.Get("password")
-		account.Status,_ = strconv.Atoi(params.Get("status"))
+		account.Status, _ = strconv.Atoi(params.Get("status"))
 		detail.Id = params.Get("did")
 		detail.AccountId = params.Get("account_id")
-		detail.Created,_= strconv.ParseInt(params.Get("created"), 10, 64)
+		detail.Created, _ = strconv.ParseInt(params.Get("created"), 10, 64)
 
 		m.Account = account
 		m.Detail = detail

@@ -152,13 +152,13 @@ func (this *UsersController) ResetPwd() {
 func (this *UsersController) SetRoles() {
 	var r controllers.Returned
 	input := this.Input()
-	rule := models.Rule{}
-	rules,err := rule.SetUserRoles(input)
+	menuRule := models.MenuRule{}
+	menuRules, err := menuRule.SetUserRoles(input)
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()
 	} else {
-		r.Data = rules
+		r.Data = menuRules
 	}
 	this.Data["json"] = r
 	this.ServeJSON()

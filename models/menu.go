@@ -7,8 +7,6 @@ import (
 
 	"github.com/xingshanghe/neapi/libs"
 	"github.com/xingshanghe/neapi/libs/uuid"
-	// "github.com/pkg/errors"
-	"github.com/astaxie/beego/logs"
 )
 
 type Menu struct {
@@ -21,7 +19,7 @@ type Menu struct {
 	IsSub    int       `json:"is_sub"`
 	Status   int       `json:"status"`
 	Sort     int       `json:"sort"`
-	Children  []*Menu   `json:"children" xorm:"-"`
+	Children []*Menu   `json:"children" xorm:"-"`
 	Sub      []*Menu   `json:"sub" xorm:"-"`
 	Created  int64     `json:"created" xorm:"created"`
 	Updated  int64     `json:"updated" xorm:"updated"`
@@ -45,12 +43,10 @@ type MenusPaged struct {
 }
 
 func GetMenuRoot(parent_id string, r int) (Menu, error) {
-
 	s := E.NewSession()
 	defer s.Close()
 
 	m := Menu{}
-	logs.Error(r)
 	if r > 5 {
 		return m, nil
 	}
@@ -78,42 +74,46 @@ func GetMenusTree(parent_id string, ids []string, withSub bool) ([]*Menu, error)
 		if ids[0] != "*" {
 			s.In("id", ids)
 		}
-	}
-	err := s.Asc("sort").Desc("created").Find(&tree)
-	if err != nil {
-		return tree, nil
-	}
-	if len(tree) > 0 {
-		for _, menu := range tree {
-			s_tree, _ := GetMenusTree(menu.Id, ids, withSub)
 
-			for _, s := range s_tree {
-				if s.IsSub > 0 && withSub {
-					menu.Sub = append(menu.Sub, s)
-				} else {
-					menu.Children = append(menu.Children, s)
+		err := s.Asc("sort").Desc("created").Find(&tree)
+		if err != nil {
+			return tree, nil
+		}
+		if len(tree) > 0 {
+			for _, menu := range tree {
+				s_tree, _ := GetMenusTree(menu.Id, ids, withSub)
+
+				for _, s := range s_tree {
+					if s.IsSub > 0 && withSub {
+						menu.Sub = append(menu.Sub, s)
+					} else {
+						menu.Children = append(menu.Children, s)
+					}
 				}
 			}
-
 		}
+		return tree, err
+	} else {
+		return tree, nil
 	}
 
-	return tree, err
 }
 
 type MenuOption struct {
-	Id    string `json:"id"`
-	Title string `json:"title"`
+	Id       string `json:"id"`
+	Title    string `json:"title"`
+	IsGroup  int    `json:"is_group"`
+	ParentId string `json:"parent_id"`
 }
 
 // 获取全部列表
 func OptionList() ([]MenuOption, error) {
 	options := []MenuOption{}
-	err := E.Table("menu").Where("status = 0").Select("id,title").Asc("sort").Desc("created").Find(&options)
+	err := E.Table("menu").Where("status = 0").Select("id,title,is_group,parent_id").Asc("sort").Desc("created").Find(&options)
 	return options, err
 }
 
-func (m *Menu) List(params url.Values)([]Menu,error)  {
+func (m *Menu) List(params url.Values) ([]Menu, error) {
 	menus := []Menu{}
 
 	err := E.Find(&menus)
@@ -191,7 +191,6 @@ func (m *Menu) Edit(params url.Values) error {
 	// TODO 向上查询,parent_id 不能和ID形成环
 	parent_id := params.Get("parent_id")
 	root, _ := GetMenuRoot(parent_id, 0)
-	logs.Error(root)
 	if (params.Get("id") == parent_id) || root.Id == "" || root.Id == params.Get("id") {
 		libs.Logger.Error("parent_id 形成闭环")
 		// return errors.New("parent_id 形成闭环")

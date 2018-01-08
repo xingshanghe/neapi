@@ -10,12 +10,14 @@ import (
 // 自定义声明
 type NeJwtClaims struct {
 	Account interface{} `json:"account"`
+	Roles   []string    `json:"roles"`
 	jwt.StandardClaims
 }
 
-func CreateJwt(account interface{}) (string, error) {
+func CreateJwt(account interface{}, roles []string) (string, error) {
 	claims := NeJwtClaims{
 		account,
+		roles,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 		},

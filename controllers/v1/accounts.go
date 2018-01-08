@@ -5,6 +5,8 @@ import (
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/libs"
 	"github.com/xingshanghe/neapi/models"
+	"net/url"
+	"strings"
 )
 
 type AccountsController struct {
@@ -25,8 +27,10 @@ func (this *AccountsController) Login() {
 	//captcha, _ := dataBody.Get("captcha").String()
 
 	var data struct {
-		Token   string      `json:"token"`
-		Account models.User `json:"account"`
+		Token   string         `json:"token"`
+		Account models.User    `json:"account"`
+		Roles   []string       `json:"roles"`
+		Menus   []*models.Menu `json:"menus"`
 	}
 	account := models.Account{
 		Username: username,
@@ -37,7 +41,7 @@ func (this *AccountsController) Login() {
 	if err == nil {
 		if hasThisAccount {
 
-			if(account.Status == 0){
+			if account.Status == 0 {
 				detail := models.Detail{
 					AccountId: account.Id,
 				}
@@ -46,12 +50,37 @@ func (this *AccountsController) Login() {
 					account,
 					detail,
 				}
+
+				roleIds := []string{}
+
+				menuRule := models.MenuRule{}
+				p := url.Values{}
+				p.Set("p_type", "g")
+				p.Set("v0", account.Id)
+				menuRules, _ := menuRule.List(p)
+				for _, mr := range menuRules {
+					roleIds = append(roleIds, mr.V1)
+				}
+
 				var token string
-				token, err = libs.CreateJwt(user)
+				token, err = libs.CreateJwt(user, roleIds)
+
+				menuIds := []string{}
+				p1 := url.Values{}
+				p1.Set("p_type", "p")
+				p1.Set("v0", strings.Join(roleIds, ","))
+				menuRules2, _ := menuRule.List(p1)
+
+				for _, mr := range menuRules2 {
+					menuIds = append(menuIds, mr.V1)
+				}
+				menuTree, err := models.GetMenusTree("", menuIds, true)
 
 				if err == nil {
+					data.Roles = roleIds
 					data.Token = token
 					data.Account = user
+					data.Menus = menuTree
 					r.Data = data
 				} else {
 					r.Data = new(struct {
@@ -59,7 +88,7 @@ func (this *AccountsController) Login() {
 					})
 					r.Msg = err.Error()
 				}
-			}else{
+			} else {
 				r.Data = new(struct {
 					Token string `json:"token"`
 				})

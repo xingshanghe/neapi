@@ -1,6 +1,6 @@
 package libs
 
 var (
-	PageNo = 1
+	PageNo   = 1
 	PageSize = 20
 )

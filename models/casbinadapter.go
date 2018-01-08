@@ -7,18 +7,17 @@ import (
 	"runtime"
 )
 
-
-// 实现 casbin.persist.CasbinAdapter
-type CasbinAdapter struct {
+// 实现 casbin.persist.CasbinMenuAdapter
+type CasbinMenuAdapter struct {
 	aliasName string
 }
 
-// finalizer is the destructor for CasbinAdapter.
-func finalizer(a *CasbinAdapter) {
+// finalizer is the destructor for CasbinMenuAdapter.
+func finalizer(a *CasbinMenuAdapter) {
 }
 
-func GetCA(alias string) *CasbinAdapter {
-	a := &CasbinAdapter{alias}
+func GetCMA(alias string) *CasbinMenuAdapter {
+	a := &CasbinMenuAdapter{alias}
 
 	// Call the destructor when the object is released.
 	// 手动gc
@@ -27,7 +26,7 @@ func GetCA(alias string) *CasbinAdapter {
 }
 
 // Rule对象转字符串存储
-func loadPolicyLine(line Rule, cm cm.Model) {
+func loadPolicyLine(line MenuRule, cm cm.Model) {
 	lineText := line.PType
 	if line.V0 != "" {
 		lineText += ", " + line.V0
@@ -52,8 +51,8 @@ func loadPolicyLine(line Rule, cm cm.Model) {
 }
 
 // 字符串转Rule对象
-func savePolicyLine(ptype string, rule []string) Rule {
-	line := Rule{}
+func savePolicyLine(ptype string, rule []string) MenuRule {
+	line := MenuRule{}
 	line.PType = ptype
 	if len(rule) > 0 {
 		line.V0 = rule[0]
@@ -78,8 +77,8 @@ func savePolicyLine(ptype string, rule []string) Rule {
 }
 
 // 加载所有策略
-func (a *CasbinAdapter) LoadPolicy(cm cm.Model) error {
-	var lines []Rule
+func (a *CasbinMenuAdapter) LoadPolicy(cm cm.Model) error {
+	var lines []MenuRule
 	err := E.Find(&lines)
 	if err != nil {
 		return err
@@ -92,23 +91,23 @@ func (a *CasbinAdapter) LoadPolicy(cm cm.Model) error {
 }
 
 // 保存策略
-func (a *CasbinAdapter) SavePolicy(cm cm.Model) error {
+func (a *CasbinMenuAdapter) SavePolicy(cm cm.Model) error {
 
-	E.DropTables(&Rule{})
-	E.CreateTables(&Rule{})
+	E.DropTables(&MenuRule{})
+	E.CreateTables(&MenuRule{})
 
-	var lines []Rule
+	var lines []MenuRule
 
 	for ptype, ast := range cm["p"] {
-		for _, rule := range ast.Policy {
-			line := savePolicyLine(ptype, rule)
+		for _, MenuRule := range ast.Policy {
+			line := savePolicyLine(ptype, MenuRule)
 			line.Id = uuid.Rand().Raw()
 			lines = append(lines, line)
 		}
 	}
 	for ptype, ast := range cm["g"] {
-		for _, rule := range ast.Policy {
-			line := savePolicyLine(ptype, rule)
+		for _, MenuRule := range ast.Policy {
+			line := savePolicyLine(ptype, MenuRule)
 			line.Id = uuid.Rand().Raw()
 			lines = append(lines, line)
 		}
@@ -119,23 +118,23 @@ func (a *CasbinAdapter) SavePolicy(cm cm.Model) error {
 }
 
 // 新增策略
-func (a *CasbinAdapter) AddPolicy(sec string, ptype string, rule []string) error {
-	line := savePolicyLine(ptype, rule)
+func (a *CasbinMenuAdapter) AddPolicy(sec string, ptype string, MenuRule []string) error {
+	line := savePolicyLine(ptype, MenuRule)
 	line.Id = uuid.Rand().Raw()
 	_, err := E.Insert(&line)
 	return err
 }
 
 // 移除策略
-func (a *CasbinAdapter) RemovePolicy(sec string, ptype string, rule []string) error {
-	line := savePolicyLine(ptype, rule)
+func (a *CasbinMenuAdapter) RemovePolicy(sec string, ptype string, MenuRule []string) error {
+	line := savePolicyLine(ptype, MenuRule)
 	_, err := E.Delete(&line)
 	return err
 }
 
 // 根据过滤条件移除策略
-func (a *CasbinAdapter) RemoveFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues ...string) error {
-	line := Rule{}
+func (a *CasbinMenuAdapter) RemoveFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues ...string) error {
+	line := MenuRule{}
 
 	line.PType = ptype
 	if fieldIndex <= 0 && 0 < fieldIndex+len(fieldValues) {

@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/models"
+	"net/url"
 )
 
 type RolesController struct {
@@ -103,13 +104,13 @@ func (this *RolesController) Delete() {
 func (this *RolesController) SetUsers() {
 	var r controllers.Returned
 	input := this.Input()
-	rule := models.Rule{}
-	rules, err := rule.SetRoleUsers(input)
+	menuRule := models.MenuRule{}
+	menuRules, err := menuRule.SetRoleUsers(input)
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()
 	} else {
-		r.Data = rules
+		r.Data = menuRules
 	}
 	this.Data["json"] = r
 	this.ServeJSON()
@@ -124,13 +125,49 @@ func (this *RolesController) SetMenus() {
 
 	input := this.Input()
 
-	rule := models.Rule{}
-	rules, err := rule.SetRoleMenus(input)
+	menuRule := models.MenuRule{}
+	menuRules, err := menuRule.SetRoleMenus(input)
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()
 	} else {
-		r.Data = rules
+		r.Data = menuRules
+	}
+
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
+// 树状结构菜单列表,用于系统，系统设置时使用
+// @Title Get Menu Tree
+// @Description  Get Menu Tree
+// @router /tree [post,get]
+func (this *RolesController) Tree() {
+	var r controllers.Returned
+	//根据角色查询 菜单
+	input := this.Input()
+	roleIds := input.Get("role_ids")
+	menuIds := []string{}
+
+	if roleIds != "" {
+		menuRule := models.MenuRule{}
+		p := url.Values{}
+		p.Set("p_type", "p")
+		p.Set("v0", roleIds)
+		menuRules, _ := menuRule.List(p)
+
+		for _, mr := range menuRules {
+			menuIds = append(menuIds, mr.V1)
+		}
+	}
+
+	//data, err := models.GetMenusTree("", menuIds, true)
+	data, err := models.GetMenusTree("", menuIds, true)
+	if err != nil {
+		r.Code = 5000
+		r.Msg = err.Error()
+	} else {
+		r.Data = data
 	}
 
 	this.Data["json"] = r

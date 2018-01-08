@@ -58,27 +58,7 @@ func (this *MenusController) Tree() {
 	var r controllers.Returned
 	//根据角色查询 菜单
 	//ids := models.GetMenusIdsByRoles(roles)
-	data, err := models.GetMenusTree("", []string{}, false)
-	if err != nil {
-		r.Code = 5000
-		r.Msg = err.Error()
-	} else {
-		r.Data = data
-	}
-
-	this.Data["json"] = r
-	this.ServeJSON()
-}
-
-// 树状结构菜单列表,用于系统，系统设置时使用
-// @Title Get Menu Tree
-// @Description  Get Menu Tree
-// @router /layouts/tree [post,get]
-func (this *MenusController) RoleTree() {
-	var r controllers.Returned
-	//根据角色查询 菜单
-	//input := this.Input()
-	data, err := models.GetMenusTree("", []string{}, false)
+	data, err := models.GetMenusTree("", []string{"*"}, false)
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()

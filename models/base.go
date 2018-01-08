@@ -8,10 +8,13 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	"github.com/casbin/casbin"
 )
 
 var E *xorm.Engine
-var Ca *CasbinAdapter
+var Cma *CasbinMenuAdapter
+var Cme *casbin.Enforcer
+
 //返回信息结构体
 type Paged struct {
 	Total    int64 `json:"total"`
@@ -21,11 +24,15 @@ type Paged struct {
 
 func init() {
 	initXorm("default")
-	Ca = GetCA("default")
+
+	appConf, _ := GetAppConf()
+	Cma = GetCMA("default")
+	Cme = casbin.NewEnforcer("conf/rbac-menu.conf", Cma, appConf.String("runmode") == "dev")
+	Cme.LoadPolicy()
 	//casbin.NewEnforcer("examples/rbac_model.conf", "")
 }
 
-func initXorm(alias string)  {
+func initXorm(alias string) {
 	appConf, _ := GetAppConf()
 	max, min := getMysqlConn()
 	mysqlResource := getMysqlResource()
@@ -72,5 +79,3 @@ func getMysqlConn() (int, int) {
 	min, _ := conf.Int("mysql::connMin")
 	return max, min
 }
-
-

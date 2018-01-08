@@ -49,14 +49,6 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
 		beego.ControllerComments{
-			Method: "RoleTree",
-			Router: `/layouts/tree`,
-			AllowHTTPMethods: []string{"post","get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
-		beego.ControllerComments{
 			Method: "Options",
 			Router: `/options`,
 			AllowHTTPMethods: []string{"post","get"},
@@ -116,6 +108,14 @@ func init() {
 			Method: "SetUsers",
 			Router: `/setUsers`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RolesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RolesController"],
+		beego.ControllerComments{
+			Method: "Tree",
+			Router: `/tree`,
+			AllowHTTPMethods: []string{"post","get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
