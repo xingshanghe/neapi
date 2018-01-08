@@ -49,6 +49,14 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
 		beego.ControllerComments{
+			Method: "RoleTree",
+			Router: `/layouts/tree`,
+			AllowHTTPMethods: []string{"post","get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
+		beego.ControllerComments{
 			Method: "Options",
 			Router: `/options`,
 			AllowHTTPMethods: []string{"post","get"},
@@ -97,6 +105,14 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RolesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RolesController"],
 		beego.ControllerComments{
+			Method: "SetMenus",
+			Router: `/setMenus`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RolesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RolesController"],
+		beego.ControllerComments{
 			Method: "SetUsers",
 			Router: `/setUsers`,
 			AllowHTTPMethods: []string{"post"},
@@ -105,8 +121,16 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RulesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RulesController"],
 		beego.ControllerComments{
-			Method: "List",
-			Router: `/`,
+			Method: "GList",
+			Router: `/g`,
+			AllowHTTPMethods: []string{"post","get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RulesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RulesController"],
+		beego.ControllerComments{
+			Method: "PList",
+			Router: `/p`,
 			AllowHTTPMethods: []string{"post","get"},
 			MethodParams: param.Make(),
 			Params: nil})

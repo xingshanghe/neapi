@@ -114,3 +114,25 @@ func (this *RolesController) SetUsers() {
 	this.Data["json"] = r
 	this.ServeJSON()
 }
+
+// 编辑
+// @Title set rules
+// @Description  set rules
+// @router /setMenus [post]
+func (this *RolesController) SetMenus() {
+	var r controllers.Returned
+
+	input := this.Input()
+
+	rule := models.Rule{}
+	rules, err := rule.SetRoleMenus(input)
+	if err != nil {
+		r.Code = 5000
+		r.Msg = err.Error()
+	} else {
+		r.Data = rules
+	}
+
+	this.Data["json"] = r
+	this.ServeJSON()
+}

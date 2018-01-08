@@ -21,7 +21,7 @@ type Menu struct {
 	IsSub    int       `json:"is_sub"`
 	Status   int       `json:"status"`
 	Sort     int       `json:"sort"`
-	Chilren  []*Menu   `json:"chilren" xorm:"-"`
+	Children  []*Menu   `json:"children" xorm:"-"`
 	Sub      []*Menu   `json:"sub" xorm:"-"`
 	Created  int64     `json:"created" xorm:"created"`
 	Updated  int64     `json:"updated" xorm:"updated"`
@@ -67,7 +67,7 @@ func GetMenuRoot(parent_id string, r int) (Menu, error) {
 }
 
 // 获取树状结构
-func GetMenusTree(parent_id string, ids []string) ([]*Menu, error) {
+func GetMenusTree(parent_id string, ids []string, withSub bool) ([]*Menu, error) {
 	tree := []*Menu{}
 	s := E.NewSession()
 	defer s.Close()
@@ -85,13 +85,13 @@ func GetMenusTree(parent_id string, ids []string) ([]*Menu, error) {
 	}
 	if len(tree) > 0 {
 		for _, menu := range tree {
-			s_tree, _ := GetMenusTree(menu.Id, ids)
+			s_tree, _ := GetMenusTree(menu.Id, ids, withSub)
 
 			for _, s := range s_tree {
-				if s.IsSub > 0 {
+				if s.IsSub > 0 && withSub {
 					menu.Sub = append(menu.Sub, s)
 				} else {
-					menu.Chilren = append(menu.Chilren, s)
+					menu.Children = append(menu.Children, s)
 				}
 			}
 
@@ -111,6 +111,14 @@ func OptionList() ([]MenuOption, error) {
 	options := []MenuOption{}
 	err := E.Table("menu").Where("status = 0").Select("id,title").Asc("sort").Desc("created").Find(&options)
 	return options, err
+}
+
+func (m *Menu) List(params url.Values)([]Menu,error)  {
+	menus := []Menu{}
+
+	err := E.Find(&menus)
+
+	return menus, err
 }
 
 // 分页列表
@@ -146,7 +154,7 @@ func (m *Menu) Add(params url.Values) error {
 	// parant_id == id 时递归查询错误
 	// TODO 向上查询,parent_id 不能和ID形成环
 	parent_id := params.Get("parent_id")
-	root, _ := GetMenuRoot(parent_id,0)
+	root, _ := GetMenuRoot(parent_id, 0)
 	if root.Id == "" {
 		libs.Logger.Error("parent_id 形成闭环")
 		// return errors.New("parent_id 形成闭环")
@@ -182,9 +190,9 @@ func (m *Menu) Edit(params url.Values) error {
 	// parant_id == id 时递归查询错误
 	// TODO 向上查询,parent_id 不能和ID形成环
 	parent_id := params.Get("parent_id")
-	root, _ := GetMenuRoot(parent_id,0)
+	root, _ := GetMenuRoot(parent_id, 0)
 	logs.Error(root)
-	if (params.Get("id") == parent_id) || root.Id == "" || root.Id == params.Get("id")  {
+	if (params.Get("id") == parent_id) || root.Id == "" || root.Id == params.Get("id") {
 		libs.Logger.Error("parent_id 形成闭环")
 		// return errors.New("parent_id 形成闭环")
 		parent_id = ""
@@ -217,7 +225,29 @@ func (m *Menu) Edit(params url.Values) error {
 
 // 删除
 func (m *Menu) Delete(params url.Values) error {
+	s := E.NewSession()
+	defer s.Close()
+
+	err := s.Begin()
+	if err != nil {
+		return err
+	}
 	//更新字段
-	_, err := E.Where("id = ?", params.Get("id")).Delete(m)
+	_, err = E.Where("id = ?", params.Get("id")).Delete(m)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	menu := Menu{
+		ParentId: "",
+	}
+	// 同时更新parent_id为该id的项为顶级菜单
+	_, err = E.Where("parent_id = ?", params.Get("id")).Cols("parent_id").Update(&menu)
+	if err != nil {
+		s.Rollback()
+		return err
+	}
+	err = s.Commit()
+
 	return err
 }

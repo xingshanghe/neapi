@@ -36,7 +36,7 @@ func (m *Rule) List(params url.Values) (Rules, error) {
 	s := E.NewSession()
 	defer s.Close()
 
-	s.Where("p_type = ? ", "g")
+	s.Where("p_type = ? ",  params.Get("p_type"))
 	if params.Get("v0") != "" {
 		s.Where("v0 = ? ", params.Get("v0"))
 	}
@@ -57,14 +57,16 @@ func (m *Rule) SetRoleUsers(params url.Values) (Rules, error) {
 
 	cleansIds := params.Get("cleans")
 	cleans := strings.Split(cleansIds, ",")
-	for _, clean:= range cleans  {
+	for _, clean := range cleans {
 		e.RemoveGroupingPolicy(clean, role)
 	}
 
 	usersIds := params.Get("users")
-	users := strings.Split(usersIds, ",")
-	for _, user := range users {
-		e.AddGroupingPolicy(user, role)
+	if usersIds != "" {
+		users := strings.Split(usersIds, ",")
+		for _, user := range users {
+			e.AddGroupingPolicy(user, role)
+		}
 	}
 	E.Where("p_type = ? and v1 = ?", "g", role).Find(&rules)
 	return rules, err
@@ -80,16 +82,38 @@ func (m *Rule) SetUserRoles(params url.Values) (Rules, error) {
 
 	cleansIds := params.Get("cleans")
 	cleans := strings.Split(cleansIds, ",")
-	for _, clean:= range cleans  {
+	for _, clean := range cleans {
 		e.RemoveGroupingPolicy(user, clean)
 	}
 
 	rolesIds := params.Get("roles")
-	roles := strings.Split(rolesIds, ",")
-
-	for _, role := range roles {
-		e.AddGroupingPolicy(user, role)
+	if rolesIds != "" {
+		roles := strings.Split(rolesIds, ",")
+		for _, role := range roles {
+			e.AddGroupingPolicy(user, role)
+		}
 	}
+
 	E.Where("p_type = ? and v0 = ?", "g", user).Find(&rules)
+	return rules, err
+}
+
+// 给角色设置菜单
+func (m *Rule) SetRoleMenus(params url.Values) (Rules, error) {
+	rules := Rules{}
+	e := casbin.NewEnforcer("conf/rbac.conf", Ca)
+	err := e.LoadPolicy()
+
+	role := params.Get("roles")
+	e.RemoveFilteredPolicy(0,role)
+	menusIds := params.Get("menus")
+
+	if menusIds != "" {
+		menus := strings.Split(menusIds, ",")
+		for _, menu := range menus {
+			e.AddPolicy(role, menu)
+		}
+	}
+	E.Where("p_type = ? and v0 = ?", "p", role).Find(&rules)
 	return rules, err
 }
