@@ -55,11 +55,11 @@ func (m *MenuRule) List(params url.Values) (MenuRules, error) {
 
 	s.Where("p_type = ? ", params.Get("p_type"))
 	if params.Get("v0") != "" {
-		s.In("v0",strings.Split(params.Get("v0"), ","))
+		s.In("v0", strings.Split(params.Get("v0"), ","))
 		//s.Where("v0 = ? ", params.Get("v0"))
 	}
 	if params.Get("v1") != "" {
-		s.In("v1",strings.Split(params.Get("v1"), ","))
+		s.In("v1", strings.Split(params.Get("v1"), ","))
 		//s.Where("v0 = ? ", params.Get("v0"))
 		//s.Where("v1 = ? ", params.Get("v1"))
 	}

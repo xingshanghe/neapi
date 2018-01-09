@@ -56,9 +56,10 @@ func (this *MenusController) Options() {
 // @router /tree [post,get]
 func (this *MenusController) Tree() {
 	var r controllers.Returned
+	input := this.Input()
 	//根据角色查询 菜单
 	//ids := models.GetMenusIdsByRoles(roles)
-	data, err := models.GetMenusTree("", []string{"*"}, false)
+	data, err := models.GetMenusTree("", []string{"*"}, false, input)
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()

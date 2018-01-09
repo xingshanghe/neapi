@@ -1,12 +1,26 @@
 package v1
 
 import (
+	"github.com/g2link/pump/libs"
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/models"
 )
 
 type UsersController struct {
 	controllers.BaseController
+}
+
+// 测试方法
+// @Title 测试方法
+// @Description  测试方法
+// @router /test [get]
+func (this *UsersController) Test() {
+	var r controllers.Returned
+
+	r.Data = libs.Md5("xiNgsHangHewaNSui")
+
+	this.Data["json"] = r
+	this.ServeJSON()
 }
 
 // 列表
@@ -139,6 +153,45 @@ func (this *UsersController) ResetPwd() {
 		r.Msg = err.Error()
 	} else {
 		r.Data = user
+	}
+
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
+// 重置密码
+// @Title ToggleStatus a User
+// @Description  ToggleStatus User
+// @router /editPwd [post]
+func (this *UsersController) EditPwd() {
+	var r controllers.Returned
+
+	input := this.Input()
+
+	password := input.Get("password")
+	password0 := input.Get("password0")
+	password1 := input.Get("password1")
+	password2 := input.Get("password2")
+
+	if password1 == password2 {
+
+		if models.GetPassword(password0) == password {
+			user := models.User{}
+			input.Set("password", password1)
+			err := user.ResetPwd(input)
+			if err != nil {
+				r.Code = 5000
+				r.Msg = err.Error()
+			} else {
+				r.Data = user
+			}
+		} else {
+			r.Code = 5000
+			r.Msg = "原始密码不正确！"
+		}
+	} else {
+		r.Code = 5000
+		r.Msg = "两次密码不一致！"
 	}
 
 	this.Data["json"] = r

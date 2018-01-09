@@ -6,9 +6,11 @@ import (
 	"github.com/astaxie/beego/config"
 	"github.com/astaxie/beego/orm"
 
+	"github.com/casbin/casbin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-	"github.com/casbin/casbin"
+
+	"github.com/xingshanghe/neapi/libs"
 )
 
 var E *xorm.Engine
@@ -30,6 +32,11 @@ func init() {
 	Cme = casbin.NewEnforcer("conf/rbac-menu.conf", Cma, appConf.String("runmode") == "dev")
 	Cme.LoadPolicy()
 	//casbin.NewEnforcer("examples/rbac_model.conf", "")
+}
+
+func GetPassword(password string) string {
+	appConf, _ := GetAppConf()
+	return libs.MD5(libs.MD5(password) + appConf.String("salt"))
 }
 
 func initXorm(alias string) {

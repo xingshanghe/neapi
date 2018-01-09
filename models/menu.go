@@ -17,6 +17,7 @@ type Menu struct {
 	ParentId string    `json:"parent_id"`
 	IsGroup  int       `json:"is_group"`
 	IsSub    int       `json:"is_sub"`
+	IsSide   int       `json:"is_side"`
 	Status   int       `json:"status"`
 	Sort     int       `json:"sort"`
 	Children []*Menu   `json:"children" xorm:"-"`
@@ -63,12 +64,16 @@ func GetMenuRoot(parent_id string, r int) (Menu, error) {
 }
 
 // 获取树状结构
-func GetMenusTree(parent_id string, ids []string, withSub bool) ([]*Menu, error) {
+func GetMenusTree(parent_id string, ids []string, withSub bool, params url.Values) ([]*Menu, error) {
 	tree := []*Menu{}
 	s := E.NewSession()
 	defer s.Close()
 
 	s.Where("parent_id = ?", parent_id)
+
+	if params.Get("is_side") != "" {
+		s.And("is_side = ?", params.Get("is_side"))
+	}
 
 	if len(ids) > 0 {
 		if ids[0] != "*" {
@@ -81,7 +86,7 @@ func GetMenusTree(parent_id string, ids []string, withSub bool) ([]*Menu, error)
 		}
 		if len(tree) > 0 {
 			for _, menu := range tree {
-				s_tree, _ := GetMenusTree(menu.Id, ids, withSub)
+				s_tree, _ := GetMenusTree(menu.Id, ids, withSub, params)
 
 				for _, s := range s_tree {
 					if s.IsSub > 0 && withSub {
@@ -109,7 +114,7 @@ type MenuOption struct {
 // 获取全部列表
 func OptionList() ([]MenuOption, error) {
 	options := []MenuOption{}
-	err := E.Table("menu").Where("status = 0").Select("id,title,is_group,parent_id").Asc("sort").Desc("created").Find(&options)
+	err := E.Table("menu").Where("status = 0 and is_side = 1").Select("id,title,is_group,parent_id").Asc("sort").Desc("created").Find(&options)
 	return options, err
 }
 
@@ -150,6 +155,7 @@ func (m *Menu) Add(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	is_group, _ := strconv.Atoi(params.Get("is_group"))
 	is_sub, _ := strconv.Atoi(params.Get("is_sub"))
+	is_side, _ := strconv.Atoi(params.Get("is_side"))
 	sort, _ := strconv.Atoi(params.Get("sort"))
 	// parant_id == id 时递归查询错误
 	// TODO 向上查询,parent_id 不能和ID形成环
@@ -169,6 +175,7 @@ func (m *Menu) Add(params url.Values) error {
 		ParentId: parent_id,
 		IsGroup:  is_group,
 		IsSub:    is_sub,
+		IsSide:   is_side,
 		Sort:     sort,
 		Status:   status,
 	}
@@ -186,6 +193,7 @@ func (m *Menu) Edit(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	is_group, _ := strconv.Atoi(params.Get("is_group"))
 	is_sub, _ := strconv.Atoi(params.Get("is_sub"))
+	is_side, _ := strconv.Atoi(params.Get("is_side"))
 	sort, _ := strconv.Atoi(params.Get("sort"))
 	// parant_id == id 时递归查询错误
 	// TODO 向上查询,parent_id 不能和ID形成环
@@ -203,12 +211,13 @@ func (m *Menu) Edit(params url.Values) error {
 		ParentId: parent_id,
 		IsGroup:  is_group,
 		IsSub:    is_sub,
+		IsSide:   is_side,
 		Sort:     sort,
 		Status:   status,
 	}
 
 	//更新字段
-	cols := []string{"title", "icon", "link", "parent_id", "is_group", "is_sub", "sort", "status"}
+	cols := []string{"title", "icon", "link", "parent_id", "is_group", "is_sub", "is_side", "sort", "status"}
 	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(menu)
 	if err != nil {
 		return err

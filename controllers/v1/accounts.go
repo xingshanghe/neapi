@@ -1,12 +1,13 @@
 package v1
 
 import (
+	"net/url"
+	"strings"
+
 	"github.com/bitly/go-simplejson"
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/libs"
 	"github.com/xingshanghe/neapi/models"
-	"net/url"
-	"strings"
 )
 
 type AccountsController struct {
@@ -34,7 +35,7 @@ func (this *AccountsController) Login() {
 	}
 	account := models.Account{
 		Username: username,
-		Password: password,
+		Password: models.GetPassword(password),
 	}
 	var hasThisAccount bool
 	hasThisAccount, err = models.E.Get(&account)
@@ -74,7 +75,11 @@ func (this *AccountsController) Login() {
 				for _, mr := range menuRules2 {
 					menuIds = append(menuIds, mr.V1)
 				}
-				menuTree, err := models.GetMenusTree("", menuIds, true)
+
+				// 获取左边侧边栏菜单
+				p2 := url.Values{}
+				p2.Set("is_side", "1")
+				menuTree, err := models.GetMenusTree("", menuIds, true, p2)
 
 				if err == nil {
 					data.Roles = roleIds

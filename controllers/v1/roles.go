@@ -162,7 +162,7 @@ func (this *RolesController) Tree() {
 	}
 
 	//data, err := models.GetMenusTree("", menuIds, true)
-	data, err := models.GetMenusTree("", menuIds, true)
+	data, err := models.GetMenusTree("", menuIds, true, input)
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()

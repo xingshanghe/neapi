@@ -99,7 +99,7 @@ func (m *User) Add(params url.Values) error {
 	account := Account{
 		Id:       uuid.Rand().Raw(),
 		Username: params.Get("username"),
-		Password: libs.GetRandomString(6),
+		Password: GetPassword("123456"),
 		Email:    params.Get("email"),
 		Phone:    params.Get("phone"),
 		Status:   0,
@@ -283,9 +283,13 @@ func (m *User) ResetPwd(params url.Values) error {
 	if err != nil {
 		return err
 	}
+	password := params.Get("password")
+	if password == "" {
+		password = "123456"
+	}
 
 	account := Account{
-		Password: libs.GetRandomString(6),
+		Password: GetPassword(password),
 	}
 
 	//更新字段
