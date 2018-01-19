@@ -1,9 +1,10 @@
 package v1
 
 import (
-	"github.com/g2link/pump/libs"
 	"github.com/xingshanghe/neapi/controllers"
+	"github.com/xingshanghe/neapi/libs"
 	"github.com/xingshanghe/neapi/models"
+	"net/url"
 )
 
 type UsersController struct {
@@ -17,7 +18,7 @@ type UsersController struct {
 func (this *UsersController) Test() {
 	var r controllers.Returned
 
-	r.Data = libs.Md5("xiNgsHangHewaNSui")
+	r.Data = libs.MD5("xiNgsHangHewaNSui")
 
 	this.Data["json"] = r
 	this.ServeJSON()
@@ -66,7 +67,7 @@ func (this *UsersController) Add() {
 	this.ServeJSON()
 }
 
-// 编辑
+// 编辑（管理员修改用户信息）
 // @Title Edit a User
 // @Description  Edit User
 // @router /edit [post]
@@ -82,6 +83,47 @@ func (this *UsersController) Edit() {
 		r.Msg = err.Error()
 	} else {
 		r.Data = user
+	}
+
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
+// 编辑（修改用户信息,完成后需要重新登录）
+// @Title Edit a User
+// @Description  Edit User
+// @router /editSelf [post]
+func (this *UsersController) EditSelf() {
+	var r controllers.Returned
+
+	input := this.Input()
+
+	user := models.User{}
+	err := user.Edit(input)
+	if err != nil {
+		r.Code = 5000
+		r.Msg = err.Error()
+	} else {
+		var data struct {
+			Token string      `json:"token"`
+			User  models.User `json:"account"`
+		}
+		data.User = user
+		roleIds := []string{}
+
+		menuRule := models.MenuRule{}
+		p := url.Values{}
+		p.Set("p_type", "g")
+		p.Set("v0", user.AccountId)
+		menuRules, _ := menuRule.List(p)
+		for _, mr := range menuRules {
+			roleIds = append(roleIds, mr.V1)
+		}
+
+		var token string
+		token, err = libs.CreateJwt(user, roleIds)
+		data.Token = token
+		r.Data = data
 	}
 
 	this.Data["json"] = r
