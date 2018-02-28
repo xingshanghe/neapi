@@ -38,7 +38,7 @@ func (this *MenusController) Options() {
 	var r controllers.Returned
 	//根据角色查询 菜单
 	//ids := models.GetMenusIdsByRoles(roles)
-	data, err := models.OptionList()
+	data, err := models.MenuOptionList()
 	if err != nil {
 		r.Code = 5000
 		r.Msg = err.Error()
@@ -70,6 +70,8 @@ func (this *MenusController) Tree() {
 	this.Data["json"] = r
 	this.ServeJSON()
 }
+
+
 
 // 新增
 // @Title Add a User

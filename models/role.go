@@ -9,13 +9,14 @@ import (
 )
 
 type Role struct {
-	Id      string    `json:"id"`
-	Name    string    `json:"name"`
-	Code    string    `json:"code"`
-	Status  int       `json:"status"`
-	Created int64     `json:"created" xorm:"created"`
-	Updated int64     `json:"updated" xorm:"updated"`
-	Deleted time.Time `json:"deleted" xorm:"deleted"`
+	Id          string    `json:"id"`
+	Name        string    `json:"name"`
+	Code        string    `json:"code"`
+	Status      int       `json:"status"`
+	Description string    `json:"description"`
+	Created     int64     `json:"created" xorm:"created"`
+	Updated     int64     `json:"updated" xorm:"updated"`
+	Deleted     time.Time `json:"deleted" xorm:"deleted"`
 }
 
 // 手动设置表名
@@ -64,10 +65,11 @@ func (m *Role) Add(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	//插入帐号信息
 	m = &Role{
-		Id:     uuid.Rand().Raw(),
-		Name:   params.Get("name"),
-		Code:   params.Get("code"),
-		Status: status,
+		Id:          uuid.Rand().Raw(),
+		Name:        params.Get("name"),
+		Code:        params.Get("code"),
+		Description: params.Get("description"),
+		Status:      status,
 	}
 	_, err := E.Insert(m)
 	if err != nil {
@@ -82,13 +84,14 @@ func (m *Role) Edit(params url.Values) error {
 
 	status, _ := strconv.Atoi(params.Get("status"))
 	role := &Role{
-		Name:   params.Get("name"),
-		Code:   params.Get("code"),
-		Status: status,
+		Name:        params.Get("name"),
+		Code:        params.Get("code"),
+		Description: params.Get("description"),
+		Status:      status,
 	}
 
 	//更新字段
-	cols := []string{"name", "code", "status"}
+	cols := []string{"name", "code", "status", "description"}
 	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(role)
 	if err != nil {
 		return err

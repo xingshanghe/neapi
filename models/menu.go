@@ -43,6 +43,19 @@ type MenusPaged struct {
 	Paged
 }
 
+func GetParentIdByLink(link string) (string, error) {
+	s := E.NewSession()
+	defer s.Close()
+	m := Menu{}
+	_, err := s.Where("link = ?", link).Get(&m)
+
+	if err != nil {
+		return "", err
+	} else {
+		return m.ParentId, err
+	}
+}
+
 func GetMenuRoot(parent_id string, r int) (Menu, error) {
 	s := E.NewSession()
 	defer s.Close()
@@ -112,7 +125,7 @@ type MenuOption struct {
 }
 
 // 获取全部列表
-func OptionList() ([]MenuOption, error) {
+func MenuOptionList() ([]MenuOption, error) {
 	options := []MenuOption{}
 	err := E.Table("menu").Where("status = 0 and is_side = 1").Select("id,title,is_group,parent_id").Asc("sort").Desc("created").Find(&options)
 	return options, err

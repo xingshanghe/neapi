@@ -40,6 +40,26 @@ func init() {
 				&v1.MenusController{},
 			),
 		),
+		beego.NSNamespace("/regions",
+			beego.NSInclude(
+				&v1.RegionsController{},
+			),
+		),
+		beego.NSNamespace("/nodes",
+			beego.NSInclude(
+				&v1.NodesController{},
+			),
+		),
+		beego.NSNamespace("/oses",
+			beego.NSInclude(
+				&v1.OsesController{},
+			),
+		),
+		beego.NSNamespace("/clusters",
+			beego.NSInclude(
+				&v1.ClustersController{},
+			),
+		),
 	)
 
 	beego.AddNamespace(dopns)

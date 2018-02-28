@@ -173,3 +173,51 @@ func (this *RolesController) Tree() {
 	this.Data["json"] = r
 	this.ServeJSON()
 }
+
+// 兄弟节点树状结构菜单列表,用于系统，系统设置时使用
+// @Title Get Menu Tree
+// @Description  Get Menu Tree
+// @router /siblingTree [post,get]
+func (this *RolesController) SiblingTree() {
+	var r controllers.Returned
+	input := this.Input()
+
+	parent_id := input.Get("parent_id")
+
+	link := input.Get("link")
+	if link != "" {
+		parent_id, _ = models.GetParentIdByLink(link)
+	}
+
+	if parent_id != "" {
+		roleIds := input.Get("role_ids")
+		menuIds := []string{}
+
+		if roleIds != "" {
+			menuRule := models.MenuRule{}
+			p := url.Values{}
+			p.Set("p_type", "p")
+			p.Set("v0", roleIds)
+			menuRules, _ := menuRule.List(p)
+
+			for _, mr := range menuRules {
+				menuIds = append(menuIds, mr.V1)
+			}
+		}
+
+		//data, err := models.GetMenusTree("", menuIds, true)
+		data, err := models.GetMenusTree(parent_id, menuIds, true, input)
+		if err != nil {
+			r.Code = 5000
+			r.Msg = err.Error()
+		} else {
+			r.Data = data
+		}
+	} else {
+		r.Code = 4000
+		r.Msg = "Invalid arguments of parent_id."
+	}
+
+	this.Data["json"] = r
+	this.ServeJSON()
+}
