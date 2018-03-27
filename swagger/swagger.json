@@ -1,0 +1,462 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "CMOP Console API",
+        "description": "CMOP Console API",
+        "version": "1.0.0",
+        "termsOfService": "http://localhost:8888/",
+        "contact": {
+            "email": "xingshanghe@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/accounts/login": {
+            "post": {
+                "tags": [
+                    "accounts"
+                ],
+                "description": "Login Users",
+                "operationId": "AccountsController.Login"
+            }
+        },
+        "/clusters/": {
+            "get": {
+                "tags": [
+                    "clusters"
+                ],
+                "description": "List Clusters",
+                "operationId": "ClustersController.Get Clusters List"
+            },
+            "post": {
+                "tags": [
+                    "clusters"
+                ],
+                "description": "Add Region",
+                "operationId": "ClustersController.Add a Region"
+            }
+        },
+        "/clusters/{id}": {
+            "put": {
+                "tags": [
+                    "clusters"
+                ],
+                "description": "Edit Region",
+                "operationId": "ClustersController.Edit a Region"
+            },
+            "delete": {
+                "tags": [
+                    "clusters"
+                ],
+                "description": "Delete Region",
+                "operationId": "ClustersController.Delete a Region"
+            }
+        },
+        "/menus/": {
+            "get": {
+                "tags": [
+                    "menus"
+                ],
+                "description": "List Roles",
+                "operationId": "MenusController.Get User Role List"
+            },
+            "post": {
+                "tags": [
+                    "menus"
+                ],
+                "description": "Add User",
+                "operationId": "MenusController.Add a User"
+            }
+        },
+        "/menus/options": {
+            "get": {
+                "tags": [
+                    "menus"
+                ],
+                "description": "Get Menu Tree",
+                "operationId": "MenusController.Get Menu Tree"
+            }
+        },
+        "/menus/tree": {
+            "get": {
+                "tags": [
+                    "menus"
+                ],
+                "description": "Get Menu Tree",
+                "operationId": "MenusController.Get Menu Tree"
+            }
+        },
+        "/menus/{id}": {
+            "put": {
+                "tags": [
+                    "menus"
+                ],
+                "description": "Edit User",
+                "operationId": "MenusController.Edit a User"
+            },
+            "delete": {
+                "tags": [
+                    "menus"
+                ],
+                "description": "Delete User",
+                "operationId": "MenusController.Delete a User"
+            }
+        },
+        "/nodes/": {
+            "get": {
+                "tags": [
+                    "nodes"
+                ],
+                "description": "List Nodes",
+                "operationId": "NodesController.Get Nodes List"
+            },
+            "post": {
+                "tags": [
+                    "nodes"
+                ],
+                "description": "Add Node",
+                "operationId": "NodesController.Add a Node"
+            }
+        },
+        "/nodes/{id}": {
+            "put": {
+                "tags": [
+                    "nodes"
+                ],
+                "description": "Edit Node",
+                "operationId": "NodesController.Edit a Node"
+            },
+            "delete": {
+                "tags": [
+                    "nodes"
+                ],
+                "description": "Delete Node",
+                "operationId": "NodesController.Delete a Node"
+            }
+        },
+        "/oses/": {
+            "get": {
+                "tags": [
+                    "oses"
+                ],
+                "description": "List Oses",
+                "operationId": "OsesController.Get Oses List"
+            },
+            "post": {
+                "tags": [
+                    "oses"
+                ],
+                "description": "Add Region",
+                "operationId": "OsesController.Add a Region"
+            }
+        },
+        "/oses/options": {
+            "get": {
+                "tags": [
+                    "oses"
+                ],
+                "description": "Get Region Options",
+                "operationId": "OsesController.Get Region Options"
+            }
+        },
+        "/oses/{id}": {
+            "put": {
+                "tags": [
+                    "oses"
+                ],
+                "description": "Edit Region",
+                "operationId": "OsesController.Edit a Region"
+            },
+            "delete": {
+                "tags": [
+                    "oses"
+                ],
+                "description": "Delete Region",
+                "operationId": "OsesController.Delete a Region"
+            }
+        },
+        "/regions/": {
+            "get": {
+                "tags": [
+                    "regions"
+                ],
+                "description": "List Roles",
+                "operationId": "RegionsController.Get Reions List"
+            },
+            "post": {
+                "tags": [
+                    "regions"
+                ],
+                "description": "Add Region",
+                "operationId": "RegionsController.Add a Region"
+            }
+        },
+        "/regions/options": {
+            "get": {
+                "tags": [
+                    "regions"
+                ],
+                "description": "Get Region Options",
+                "operationId": "RegionsController.Get Region Options"
+            }
+        },
+        "/regions/{id}": {
+            "post": {
+                "tags": [
+                    "regions"
+                ],
+                "description": "Edit Region",
+                "operationId": "RegionsController.Edit a Region"
+            },
+            "delete": {
+                "tags": [
+                    "regions"
+                ],
+                "description": "Delete Region",
+                "operationId": "RegionsController.Delete a Region"
+            }
+        },
+        "/roles/": {
+            "get": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "List Roles",
+                "operationId": "RolesController.Get User Role List"
+            },
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "List Roles",
+                "operationId": "RolesController.Get User Role List"
+            }
+        },
+        "/roles/add": {
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Add User",
+                "operationId": "RolesController.Add a User"
+            }
+        },
+        "/roles/delete": {
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Delete User",
+                "operationId": "RolesController.Delete a User"
+            }
+        },
+        "/roles/edit": {
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Edit User",
+                "operationId": "RolesController.Edit a User"
+            }
+        },
+        "/roles/setMenus": {
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "set rules",
+                "operationId": "RolesController.set rules"
+            }
+        },
+        "/roles/setUsers": {
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "set Roles to a User",
+                "operationId": "RolesController.set Roles to a User"
+            }
+        },
+        "/roles/siblingTree": {
+            "get": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Get Menu Tree",
+                "operationId": "RolesController.Get Menu Tree"
+            },
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Get Menu Tree",
+                "operationId": "RolesController.Get Menu Tree"
+            }
+        },
+        "/roles/tree": {
+            "get": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Get Menu Tree",
+                "operationId": "RolesController.Get Menu Tree"
+            },
+            "post": {
+                "tags": [
+                    "roles"
+                ],
+                "description": "Get Menu Tree",
+                "operationId": "RolesController.Get Menu Tree"
+            }
+        },
+        "/rules/g": {
+            "get": {
+                "tags": [
+                    "rules"
+                ],
+                "description": "List Roles",
+                "operationId": "RulesController.Get User Role List"
+            },
+            "post": {
+                "tags": [
+                    "rules"
+                ],
+                "description": "List Roles",
+                "operationId": "RulesController.Get User Role List"
+            }
+        },
+        "/rules/p": {
+            "get": {
+                "tags": [
+                    "rules"
+                ],
+                "description": "List Roles",
+                "operationId": "RulesController.Get User Role List"
+            },
+            "post": {
+                "tags": [
+                    "rules"
+                ],
+                "description": "List Roles",
+                "operationId": "RulesController.Get User Role List"
+            }
+        },
+        "/users/": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "description": "List Users",
+                "operationId": "UsersController.Get User Account List"
+            },
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "List Users",
+                "operationId": "UsersController.Get User Account List"
+            }
+        },
+        "/users/add": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "Add User",
+                "operationId": "UsersController.Add a User"
+            }
+        },
+        "/users/delete": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "Delete User",
+                "operationId": "UsersController.Delete a User"
+            }
+        },
+        "/users/edit": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "Edit User",
+                "operationId": "UsersController.Edit a User"
+            }
+        },
+        "/users/editPwd": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "ToggleStatus User",
+                "operationId": "UsersController.ToggleStatus a User"
+            }
+        },
+        "/users/editSelf": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "Edit User",
+                "operationId": "UsersController.Edit a User"
+            }
+        },
+        "/users/resetPwd": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "ToggleStatus User",
+                "operationId": "UsersController.ToggleStatus a User"
+            }
+        },
+        "/users/setRoles": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "set Roles to a User",
+                "operationId": "UsersController.set Roles to a User"
+            }
+        },
+        "/users/test": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "description": "测试方法",
+                "operationId": "UsersController.测试方法"
+            }
+        },
+        "/users/toggleStatus": {
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "ToggleStatus User",
+                "operationId": "UsersController.ToggleStatus a User"
+            }
+        },
+        "/users/{username}": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "description": "List Users",
+                "operationId": "UsersController.Get User Account List"
+            },
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "description": "List Users",
+                "operationId": "UsersController.Get User Account List"
+            }
+        }
+    }
+}

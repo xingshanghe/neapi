@@ -3,7 +3,6 @@ package v1
 import (
 	"github.com/xingshanghe/neapi/controllers"
 	"github.com/xingshanghe/neapi/models"
-	"github.com/astaxie/beego/logs"
 )
 
 type NodesController struct {
@@ -13,12 +12,12 @@ type NodesController struct {
 // 空闲列表
 // @Title Get Nodes List
 // @Description  List Nodes
-// @router / [post,get]
-func (this *NodesController) List() {
+// @router / [get]
+func (this *NodesController) Get() {
 	var r controllers.Returned
 	input := this.Input()
 
-	input.Set("idle","1")
+	input.Set("idle", "1")
 
 	node := models.Node{}
 	data, err := node.Page(input)
@@ -36,8 +35,8 @@ func (this *NodesController) List() {
 // 新增
 // @Title Add a Node
 // @Description  Add Node
-// @router /add [post]
-func (this *NodesController) Add() {
+// @router / [post]
+func (this *NodesController) Post() {
 	var r controllers.Returned
 
 	input := this.Input()
@@ -48,7 +47,6 @@ func (this *NodesController) Add() {
 		r.Code = 5000
 		r.Msg = err.Error()
 	} else {
-		logs.Error(node)
 		r.Data = node
 	}
 
@@ -59,13 +57,15 @@ func (this *NodesController) Add() {
 // 编辑
 // @Title Edit a Node
 // @Description  Edit Node
-// @router /edit [post]
-func (this *NodesController) Edit() {
+// @router /:id [put]
+func (this *NodesController) Put() {
 	var r controllers.Returned
 
 	input := this.Input()
 
+	id := this.Ctx.Input.Param(":id")
 	node := models.Node{}
+	node.NodePrimary.Id = id
 	err := node.Edit(input)
 	if err != nil {
 		r.Code = 5000
@@ -81,13 +81,15 @@ func (this *NodesController) Edit() {
 // 删除
 // @Title Delete a Node
 // @Description  Delete Node
-// @router /delete [post]
+// @router /:id [delete]
 func (this *NodesController) Delete() {
 	var r controllers.Returned
 
 	input := this.Input()
 
+	id := this.Ctx.Input.Param(":id")
 	node := models.Node{}
+	node.NodePrimary.Id = id
 	err := node.Delete(input)
 	if err != nil {
 		r.Code = 5000

@@ -95,11 +95,15 @@ func (m *User) Add(params url.Values) error {
 	if err != nil {
 		return err
 	}
+	pwd := params.Get("password")
+	if pwd == "" {
+		pwd = "123456"
+	}
 	//插入帐号信息
 	account := Account{
 		Id:       uuid.Rand().Raw(),
 		Username: params.Get("username"),
-		Password: GetPassword("123456"),
+		Password: GetPassword(pwd),
 		Email:    params.Get("email"),
 		Phone:    params.Get("phone"),
 		Status:   0,

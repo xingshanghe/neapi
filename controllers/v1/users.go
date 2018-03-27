@@ -67,6 +67,39 @@ func (this *UsersController) Add() {
 	this.ServeJSON()
 }
 
+// 获取用户详情
+// @Title Get User Account List
+// @Description  List Users
+// @router /:username [post,get]
+func (this *UsersController) Detail()  {
+	var r controllers.Returned
+
+	username := this.Ctx.Input.Param(":username")
+	account := models.Account{
+		Username: username,
+	}
+	hasThisAccount, err := models.E.Get(&account)
+	if err == nil {
+		if hasThisAccount {
+			detail := models.Detail{
+				AccountId: account.Id,
+			}
+			models.E.Get(&detail)
+			user := models.User{
+				account,
+				detail,
+			}
+			r.Data = user
+		}
+	}else{
+		r.Code = 5000
+		r.Msg = err.Error()
+	}
+
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
 // 编辑（管理员修改用户信息）
 // @Title Edit a User
 // @Description  Edit User

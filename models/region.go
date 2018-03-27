@@ -102,24 +102,17 @@ func (m *Region) Edit(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	sort, _ := strconv.Atoi(params.Get("sort"))
 
-	region := &Region{
-		Name:        params.Get("name"),
-		Code:        params.Get("code"),
-		Status:      status,
-		Sort:        sort,
-		Description: params.Get("description"),
-	}
+	m.Name = params.Get("name")
+	m.Code = params.Get("code")
+	m.Status = status
+	m.Sort = sort
+	m.Description = params.Get("description")
 
 	//更新字段
 	cols := []string{"name", "code", "status", "sort", "description"}
-	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(region)
+	_, err := E.Where("id = ?", m.Id).Cols(cols...).Update(m)
 	if err != nil {
 		return err
-	} else {
-		//补全接口未修改字段
-		region.Id = params.Get("id")
-		region.Created, _ = strconv.ParseInt(params.Get("created"), 10, 64)
-		m = region
 	}
 
 	return err
@@ -128,6 +121,6 @@ func (m *Region) Edit(params url.Values) error {
 // 删除
 func (m *Region) Delete(params url.Values) error {
 	//更新字段
-	_, err := E.Where("id = ?", params.Get("id")).Delete(m)
+	_, err := E.Where("id = ?", m.Id).Delete(m)
 	return err
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	_ "github.com/xingshanghe/neapi/libs"
 )
 
 // 基础控制器

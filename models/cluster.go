@@ -94,26 +94,20 @@ func (m *Cluster) Edit(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	sort, _ := strconv.Atoi(params.Get("sort"))
 
-	cluster := &Cluster{
-		Name:        params.Get("name"),
-		Alias:       params.Get("alias"),
-		IpCidr:      params.Get("ip_cidr"),
-		StoreDir:    params.Get("store_dir"),
-		Status:      status,
-		Sort:        sort,
-		Description: params.Get("description"),
-	}
+	m.Name = params.Get("name")
+	m.Alias = params.Get("alias")
+	m.IpCidr = params.Get("ip_cidr")
+	m.StoreDir = params.Get("store_dir")
+	m.Status = status
+	m.Sort = sort
+	m.Description = params.Get("description")
+
 
 	//更新字段
 	cols := []string{"name", "alias", "ip_cidr", "store_dir", "status", "sort", "description"}
-	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(cluster)
+	_, err := E.Where("id = ?", m.Id).Cols(cols...).Update(m)
 	if err != nil {
 		return err
-	} else {
-		//补全接口未修改字段
-		cluster.Id = params.Get("id")
-		cluster.Created, _ = strconv.ParseInt(params.Get("created"), 10, 64)
-		m = cluster
 	}
 
 	return err
@@ -122,6 +116,6 @@ func (m *Cluster) Edit(params url.Values) error {
 // 删除
 func (m *Cluster) Delete(params url.Values) error {
 	//更新字段
-	_, err := E.Where("id = ?", params.Get("id")).Delete(m)
+	_, err := E.Where("id = ?", m.Id).Delete(m)
 	return err
 }

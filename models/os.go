@@ -111,26 +111,19 @@ func (m *Os) Edit(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	sort, _ := strconv.Atoi(params.Get("sort"))
 
-	os := &Os{
-		Name:        params.Get("name"),
-		Family:      params.Get("family"),
-		Version:     params.Get("version"),
-		Bit:         bit,
-		Status:      status,
-		Sort:        sort,
-		Description: params.Get("description"),
-	}
+	m.Name = params.Get("name")
+	m.Family = params.Get("family")
+	m.Version = params.Get("version")
+	m.Bit = bit
+	m.Status = status
+	m.Sort = sort
+	m.Description = params.Get("description")
 
 	//更新字段
 	cols := []string{"name", "family", "version", "bit", "status", "sort", "description"}
-	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(os)
+	_, err := E.Where("id = ?", m.Id).Cols(cols...).Update(m)
 	if err != nil {
 		return err
-	} else {
-		//补全接口未修改字段
-		os.Id = params.Get("id")
-		os.Created, _ = strconv.ParseInt(params.Get("created"), 10, 64)
-		m = os
 	}
 
 	return err
@@ -139,6 +132,6 @@ func (m *Os) Edit(params url.Values) error {
 // 删除
 func (m *Os) Delete(params url.Values) error {
 	//更新字段
-	_, err := E.Where("id = ?", params.Get("id")).Delete(m)
+	_, err := E.Where("id = ?", m.Id).Delete(m)
 	return err
 }

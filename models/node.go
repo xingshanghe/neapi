@@ -36,6 +36,10 @@ type Node struct {
 }
 
 // 手动设置表名
+func (m *Node) TableName() string {
+	return "node"
+}
+// 手动设置表名
 func (m *NodePrimary) TableName() string {
 	return "node"
 }
@@ -137,30 +141,23 @@ func (m *Node) Edit(params url.Values) error {
 	status, _ := strconv.Atoi(params.Get("status"))
 	sort, _ := strconv.Atoi(params.Get("sort"))
 
-	node := &NodePrimary{
-		Name:        params.Get("name"),
-		Alias:       params.Get("alias"),
-		Ip:          params.Get("ip"),
-		Port:        params.Get("port"),
-		Username:    params.Get("username"),
-		Password:    params.Get("password"),
-		RegionId:    params.Get("region_id"),
-		OsId:        params.Get("os_id"),
-		Status:      status,
-		Sort:        sort,
-		Description: params.Get("description"),
-	}
+	m.NodePrimary.Name = params.Get("name")
+	m.NodePrimary.Alias = params.Get("alias")
+	m.NodePrimary.Ip = params.Get("ip")
+	m.NodePrimary.Port = params.Get("port")
+	m.NodePrimary.Username = params.Get("username")
+	m.NodePrimary.Password = params.Get("password")
+	m.NodePrimary.RegionId = params.Get("region_id")
+	m.NodePrimary.OsId = params.Get("os_id")
+	m.NodePrimary.Status = status
+	m.NodePrimary.Sort = sort
+	m.NodePrimary.Description = params.Get("description")
 
 	//更新字段
 	cols := []string{"name", "alias", "ip", "port", "username", "password", "region_id", "os_id", "status", "sort", "description"}
-	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(node)
+	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(&m.NodePrimary)
 	if err != nil {
 		return err
-	} else {
-		//补全接口未修改字段
-		//node.Id = params.Get("id")
-		//node.Created, _ = strconv.ParseInt(params.Get("created"), 10, 64)
-		m.NodePrimary = *node
 	}
 
 	return err

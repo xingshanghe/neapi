@@ -11,71 +11,71 @@ func init() {
 		beego.ControllerComments{
 			Method: "Login",
 			Router: `/login`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"],
 		beego.ControllerComments{
-			Method: "List",
+			Method: "Get",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"],
 		beego.ControllerComments{
 			Method: "Add",
-			Router: `/add`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"],
-		beego.ControllerComments{
-			Method: "Delete",
-			Router: `/delete`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"],
-		beego.ControllerComments{
-			Method: "Edit",
-			Router: `/edit`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
-		beego.ControllerComments{
-			Method: "List",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:ClustersController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
 		beego.ControllerComments{
-			Method: "Add",
-			Router: `/add`,
+			Method: "Get",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
 		beego.ControllerComments{
 			Method: "Delete",
-			Router: `/delete`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:MenusController"],
-		beego.ControllerComments{
-			Method: "Edit",
-			Router: `/edit`,
-			AllowHTTPMethods: []string{"post"},
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -83,7 +83,7 @@ func init() {
 		beego.ControllerComments{
 			Method: "Options",
 			Router: `/options`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -91,71 +91,71 @@ func init() {
 		beego.ControllerComments{
 			Method: "Tree",
 			Router: `/tree`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"],
 		beego.ControllerComments{
-			Method: "List",
+			Method: "Get",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"],
 		beego.ControllerComments{
-			Method: "Add",
-			Router: `/add`,
+			Method: "Post",
+			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"],
 		beego.ControllerComments{
 			Method: "Delete",
-			Router: `/delete`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:NodesController"],
-		beego.ControllerComments{
-			Method: "Edit",
-			Router: `/edit`,
-			AllowHTTPMethods: []string{"post"},
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"],
 		beego.ControllerComments{
-			Method: "List",
+			Method: "Get",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"],
 		beego.ControllerComments{
-			Method: "Add",
-			Router: `/add`,
+			Method: "Post",
+			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"],
 		beego.ControllerComments{
 			Method: "Delete",
-			Router: `/delete`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:OsesController"],
-		beego.ControllerComments{
-			Method: "Edit",
-			Router: `/edit`,
-			AllowHTTPMethods: []string{"post"},
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -163,39 +163,39 @@ func init() {
 		beego.ControllerComments{
 			Method: "Options",
 			Router: `/options`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"],
 		beego.ControllerComments{
-			Method: "List",
+			Method: "Get",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"],
 		beego.ControllerComments{
-			Method: "Add",
-			Router: `/add`,
+			Method: "Post",
+			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"],
 		beego.ControllerComments{
 			Method: "Delete",
-			Router: `/delete`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:RegionsController"],
-		beego.ControllerComments{
-			Method: "Edit",
-			Router: `/edit`,
-			AllowHTTPMethods: []string{"post"},
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -203,7 +203,7 @@ func init() {
 		beego.ControllerComments{
 			Method: "Options",
 			Router: `/options`,
-			AllowHTTPMethods: []string{"post","get"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -291,6 +291,14 @@ func init() {
 		beego.ControllerComments{
 			Method: "List",
 			Router: `/`,
+			AllowHTTPMethods: []string{"post","get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:UsersController"] = append(beego.GlobalControllerRouter["github.com/xingshanghe/neapi/controllers/v1:UsersController"],
+		beego.ControllerComments{
+			Method: "Detail",
+			Router: `/:username`,
 			AllowHTTPMethods: []string{"post","get"},
 			MethodParams: param.Make(),
 			Params: nil})

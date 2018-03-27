@@ -17,7 +17,7 @@ type AccountsController struct {
 // 登录
 // @Title Login
 // @Description  Login Users
-// @router /login [post,get]
+// @router /login [post]
 func (this *AccountsController) Login() {
 	var r controllers.Returned
 

@@ -12,8 +12,8 @@ type RegionsController struct {
 // 列表
 // @Title Get Reions List
 // @Description  List Roles
-// @router / [post,get]
-func (this *RegionsController) List() {
+// @router / [get]
+func (this *RegionsController) Get() {
 	var r controllers.Returned
 	input := this.Input()
 
@@ -33,8 +33,8 @@ func (this *RegionsController) List() {
 // 新增
 // @Title Add a Region
 // @Description  Add Region
-// @router /add [post]
-func (this *RegionsController) Add() {
+// @router / [post]
+func (this *RegionsController) Post() {
 	var r controllers.Returned
 
 	input := this.Input()
@@ -55,13 +55,16 @@ func (this *RegionsController) Add() {
 // 编辑
 // @Title Edit a Region
 // @Description  Edit Region
-// @router /edit [post]
-func (this *RegionsController) Edit() {
+// @router /:id [put]
+func (this *RegionsController) Put() {
 	var r controllers.Returned
 
 	input := this.Input()
 
-	region := models.Region{}
+	id := this.Ctx.Input.Param(":id")
+	region := models.Region{
+		Id:id,
+	}
 	err := region.Edit(input)
 	if err != nil {
 		r.Code = 5000
@@ -77,13 +80,16 @@ func (this *RegionsController) Edit() {
 // 删除
 // @Title Delete a Region
 // @Description  Delete Region
-// @router /delete [post]
+// @router /:id [delete]
 func (this *RegionsController) Delete() {
 	var r controllers.Returned
 
 	input := this.Input()
 
-	region := models.Region{}
+	id := this.Ctx.Input.Param(":id")
+	region := models.Region{
+		Id:id,
+	}
 	err := region.Delete(input)
 	if err != nil {
 		r.Code = 5000
@@ -99,7 +105,7 @@ func (this *RegionsController) Delete() {
 // 树状结构菜单列表
 // @Title Get Region Options
 // @Description  Get Region Options
-// @router /options [post,get]
+// @router /options [get]
 func (this *RegionsController) Options() {
 	var r controllers.Returned
 	data, err := models.RegionOptionList()

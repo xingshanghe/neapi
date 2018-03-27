@@ -217,28 +217,22 @@ func (m *Menu) Edit(params url.Values) error {
 		// return errors.New("parent_id 形成闭环")
 		parent_id = ""
 	}
-	menu := &Menu{
-		Title:    params.Get("title"),
-		Icon:     params.Get("icon"),
-		Link:     params.Get("link"),
-		ParentId: parent_id,
-		IsGroup:  is_group,
-		IsSub:    is_sub,
-		IsSide:   is_side,
-		Sort:     sort,
-		Status:   status,
-	}
+
+	m.Title = params.Get("title")
+	m.Icon = params.Get("icon")
+	m.Link = params.Get("link")
+	m.ParentId = parent_id
+	m.IsGroup = is_group
+	m.IsSub = is_sub
+	m.IsSide = is_side
+	m.Sort = sort
+	m.Status = status
 
 	//更新字段
 	cols := []string{"title", "icon", "link", "parent_id", "is_group", "is_sub", "is_side", "sort", "status"}
-	_, err := E.Where("id = ?", params.Get("id")).Cols(cols...).Update(menu)
+	_, err := E.Where("id = ?", m.Id).Cols(cols...).Update(m)
 	if err != nil {
 		return err
-	} else {
-		//补全接口未修改字段
-		menu.Id = params.Get("id")
-		menu.Created, _ = strconv.ParseInt(params.Get("created"), 10, 64)
-		m = menu
 	}
 
 	return err
@@ -254,7 +248,7 @@ func (m *Menu) Delete(params url.Values) error {
 		return err
 	}
 	//更新字段
-	_, err = E.Where("id = ?", params.Get("id")).Delete(m)
+	_, err = E.Where("id = ?", m.Id).Delete(m)
 	if err != nil {
 		s.Rollback()
 		return err
@@ -263,7 +257,7 @@ func (m *Menu) Delete(params url.Values) error {
 		ParentId: "",
 	}
 	// 同时更新parent_id为该id的项为顶级菜单
-	_, err = E.Where("parent_id = ?", params.Get("id")).Cols("parent_id").Update(&menu)
+	_, err = E.Where("parent_id = ?", m.Id).Cols("parent_id").Update(&menu)
 	if err != nil {
 		s.Rollback()
 		return err
